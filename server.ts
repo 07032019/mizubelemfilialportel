@@ -20,7 +20,7 @@ async function startServer() {
   try {
     db = new Database("catalog.db", { verbose: console.log });
     console.log("Database initialized.");
-    
+
     // Initialize Database
     db.exec(`
       CREATE TABLE IF NOT EXISTS users (
@@ -72,7 +72,7 @@ async function startServer() {
     if (!adminExists) {
       const hashedPassword = bcrypt.hashSync("Jr07032019##", 10);
       db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run(newAdminEmail, hashedPassword);
-      
+
       // Remove old default admin if it exists
       db.prepare("DELETE FROM users WHERE username = ?").run("admin");
     }
@@ -106,7 +106,7 @@ async function startServer() {
   }
 
   const app = express();
-  
+
   // Create uploads directory if it doesn't exist
   const uploadsDir = path.join(__dirname, "uploads");
   if (!fs.existsSync(uploadsDir)) {
@@ -132,7 +132,7 @@ async function startServer() {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
   });
-  
+
   app.use(express.json());
 
   // Auth Middleware
@@ -278,7 +278,7 @@ async function startServer() {
       const totalCategories = db.prepare("SELECT COUNT(*) as count FROM categories").get() as any;
       const avgPrice = db.prepare("SELECT AVG(price) as avg FROM products").get() as any;
       const stockValue = db.prepare("SELECT SUM(price * stock) as total FROM products").get() as any;
-      
+
       const categoryStats = db.prepare(`
         SELECT c.name, COUNT(p.id) as count 
         FROM categories c 
@@ -338,7 +338,7 @@ async function startServer() {
   app.get("/api/download/:filename", authenticateToken, (req, res) => {
     const fileName = req.params.filename;
     const filePath = path.join(uploadsDir, fileName);
-    
+
     if (fs.existsSync(filePath)) {
       res.download(filePath);
     } else {
@@ -366,7 +366,7 @@ async function startServer() {
     });
   }
 
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });

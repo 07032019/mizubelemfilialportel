@@ -9,6 +9,7 @@
     "scripts": {
         "dev": "tsx server.ts",
         "build": "vite build",
+        "start": "tsx server.ts",
         "preview": "vite preview",
         "clean": "rimraf dist",
         "lint": "tsc --noEmit"
